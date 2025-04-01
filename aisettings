@@ -1,0 +1,4 @@
+# AI Settings
+version=1.0.0
+model=Claude-3-Sonnet
+temperature=0.7 

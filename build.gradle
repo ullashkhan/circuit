@@ -1,0 +1,66 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
+group = 'fluff.lgs'
+version = '1.0.0'
+
+application {
+    mainClass = 'fluff.lgs.Main'
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+}
+
+dependencies {
+    implementation 'org.slick2d:slick2d-core:1.0.2'
+    implementation 'org.lwjgl.lwjgl:lwjgl:2.9.3'
+    implementation 'org.lwjgl.lwjgl:lwjgl_util:2.9.3'
+    implementation 'net.java.dev.jna:jna:5.6.0'
+    implementation 'net.java.dev.jna:jna-platform:5.6.0'
+    
+    runtimeOnly files("lib/natives/")
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'fluff.lgs.Main',
+            'Class-Path': configurations.runtimeClasspath.collect { it.getName() }.join(' ')
+        )
+    }
+    
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+}
+
+// Clean build directory before each build
+clean {
+    delete "${buildDir}"
+}
+
+// Ensure resources are included in the JAR
+processResources {
+    from('src/main/resources')
+}
+
